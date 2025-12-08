@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "rootDir": "./src",
+    "outDir": "./dist",
+
+    "target": "ESNext",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "lib": ["ESNext", "DOM"],
+    "types": ["node"],
+
+    "esModuleInterop": true,              // <-- critical
+    "allowSyntheticDefaultImports": true, // <-- works with esModuleInterop
+
+    "strict": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["src", "src/types"],
+  "exclude": ["dist"]
+}
