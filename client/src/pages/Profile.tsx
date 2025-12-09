@@ -13,31 +13,33 @@ export default function Profile() {
     email: "",
     avatarUrl: ""
   });
+
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
     newPassword: "",
     confirmPassword: ""
   });
+
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
   useEffect(() => {
     if (user) {
       setForm({
-        firstName: user.firstName,
-        lastName: user.lastName,
-        username: user.username,
-        email: user.email,
+        firstName: user.firstName ?? "",
+        lastName: user.lastName ?? "",
+        username: user.username ?? "",
+        email: user.email ?? "",
         avatarUrl: user.avatarUrl || ""
       });
     }
   }, [user]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
+    setPasswordForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const uploadAvatar = async (file: File) => {
@@ -53,13 +55,13 @@ export default function Profile() {
       const data = await cloudRes.json();
 
       const res = await api.patch("/api/user", { avatarUrl: data.secure_url });
-      const updatedUser = res.data.data;
+      const updatedUser = res.data.data || res.data.user || res.data;
 
       setForm(f => ({ ...f, avatarUrl: updatedUser.avatarUrl }));
       setUser(updatedUser);
       setMessage({ type: "success", text: "Avatar updated!" });
-    } catch {
-      setMessage({ type: "error", text: "Failed to upload avatar" });
+    } catch (err: any) {
+      setMessage({ type: "error", text: err.response?.data?.error || "Failed to upload avatar" });
     }
   };
 
@@ -67,18 +69,23 @@ export default function Profile() {
     e.preventDefault();
     try {
       const res = await api.patch("/api/user", form);
-      const updatedUser = res.data.data;
+      const updatedUser = res.data.data || res.data.user || res.data;
+
       setForm({
-        firstName: updatedUser.firstName,
-        lastName: updatedUser.lastName,
-        username: updatedUser.username,
-        email: updatedUser.email,
+        firstName: updatedUser.firstName ?? "",
+        lastName: updatedUser.lastName ?? "",
+        username: updatedUser.username ?? "",
+        email: updatedUser.email ?? "",
         avatarUrl: updatedUser.avatarUrl || ""
       });
       setUser(updatedUser);
       setMessage({ type: "success", text: "Profile updated!" });
     } catch (err: any) {
-      setMessage({ type: "error", text: err.response?.data?.error || "Failed to update profile" });
+      const errorMsg =
+        err.response?.data?.error?.includes("Unique constraint")
+          ? "Email or username already exists"
+          : err.response?.data?.error || "Failed to update profile";
+      setMessage({ type: "error", text: errorMsg });
     }
   };
 
@@ -103,12 +110,13 @@ export default function Profile() {
   return (
     <div
       style={{
+        minHeight: "100vh",
+        width: "100%",
+        background: "linear-gradient(to right, #74ebd5, #ACB6E5)", // 🌈 full-width gradient
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        minHeight: "100vh",
-        background: "linear-gradient(to right, #74ebd5, #ACB6E5)", // 🌈 unified gradient
-        padding: "2rem",
+        paddingTop: "80px" // ✅ space for fixed Navbar
       }}
     >
       <div
@@ -118,16 +126,13 @@ export default function Profile() {
           backgroundColor: "#fafafa",
           padding: "2rem",
           borderRadius: "8px",
-          boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+          boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
         }}
       >
         {message && <MessageBanner type={message.type} message={message.text} />}
 
         <h2 style={{ textAlign: "center", marginBottom: "1rem" }}>Update Profile</h2>
-        <form
-          onSubmit={updateProfile}
-          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
-        >
+        <form onSubmit={updateProfile} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           <input name="firstName" placeholder="First Name" value={form.firstName} onChange={handleChange} />
           <input name="lastName" placeholder="Last Name" value={form.lastName} onChange={handleChange} />
           <input name="username" placeholder="Username" value={form.username} onChange={handleChange} />
@@ -144,7 +149,11 @@ export default function Profile() {
             />
           </div>
           {form.avatarUrl && (
-            <img src={form.avatarUrl} alt="avatar" style={{ width: "80px", borderRadius: "50%", marginTop: "0.5rem" }} />
+            <img
+              src={form.avatarUrl}
+              alt="avatar"
+              style={{ width: "80px", borderRadius: "50%", marginTop: "0.5rem" }}
+            />
           )}
           <button
             type="submit"
@@ -155,7 +164,7 @@ export default function Profile() {
               color: "#fff",
               border: "none",
               borderRadius: "4px",
-              cursor: "pointer",
+              cursor: "pointer"
             }}
           >
             Save Profile
@@ -163,10 +172,7 @@ export default function Profile() {
         </form>
 
         <h2 style={{ textAlign: "center", marginTop: "2rem" }}>Update Password</h2>
-        <form
-          onSubmit={updatePassword}
-          style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}
-        >
+        <form onSubmit={updatePassword} style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
           <input
             type="password"
             name="currentPassword"
@@ -197,7 +203,7 @@ export default function Profile() {
               color: "#fff",
               border: "none",
               borderRadius: "4px",
-              cursor: "pointer",
+              cursor: "pointer"
             }}
           >
             Change Password
