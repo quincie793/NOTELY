@@ -111,6 +111,24 @@ export default function Navbar() {
                 Login
               </NavLink>
               <NavLink
+  to="/bookmarks"
+  className={({ isActive }) =>
+    isActive ? "nav-link active" : "nav-link"
+  }
+>
+  Bookmarks
+</NavLink>
+
+              <NavLink
+  to="/pinned"
+  className={({ isActive }) =>
+    isActive ? "nav-link active" : "nav-link"
+  }
+>
+  Pinned
+</NavLink>
+
+              <NavLink
                 to="/register"
                 className={({ isActive }) =>
                   isActive ? "nav-link active" : "nav-link"

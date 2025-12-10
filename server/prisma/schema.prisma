@@ -29,6 +29,8 @@ model Entry {
   dateCreated DateTime @default(now())
   lastUpdated DateTime @updatedAt
   isPublic    Boolean  @default(false)
+    pinned      Boolean  @default(false)
+  bookmarked  Boolean  @default(false)
   userId      String
   user        User     @relation(fields: [userId], references: [id])
 }

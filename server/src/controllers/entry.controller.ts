@@ -23,6 +23,55 @@ export async function createEntry(req: Request, res: Response) {
 export async function listEntries(req: Request, res: Response) {
   const entries = await prisma.entry.findMany({
     where: { userId: req.user!.id, isDeleted: false },
+    orderBy: [
+      { pinned: "desc" },       // ✅ pinned entries first
+      { dateCreated: "desc" }
+    ],
+  });
+  res.json({ data: entries });
+}
+
+// ✅ Toggle pin
+export async function togglePin(req: Request, res: Response) {
+  const { id } = req.params;
+  try {
+    const entry = await prisma.entry.update({
+      where: { id },
+      data: { pinned: { set: req.body.pinned } }, // expects boolean
+    });
+    res.json({ message: "Pin updated", data: entry });
+  } catch {
+    res.status(404).json({ error: "Entry not found" });
+  }
+}
+
+// ✅ Toggle bookmark
+export async function toggleBookmark(req: Request, res: Response) {
+  const { id } = req.params;
+  try {
+    const entry = await prisma.entry.update({
+      where: { id },
+      data: { bookmarked: { set: req.body.bookmarked } }, // expects boolean
+    });
+    res.json({ message: "Bookmark updated", data: entry });
+  } catch {
+    res.status(404).json({ error: "Entry not found" });
+  }
+}
+
+// ✅ List bookmarked entries
+export async function listBookmarks(req: Request, res: Response) {
+  const entries = await prisma.entry.findMany({
+    where: { userId: req.user!.id, bookmarked: true, isDeleted: false },
+    orderBy: { dateCreated: "desc" },
+  });
+  res.json({ data: entries });
+}
+
+export async function listPinned(req: Request, res: Response) {
+  const entries = await prisma.entry.findMany({
+    where: { userId: req.user!.id, pinned: true, isDeleted: false },
+    orderBy: { dateCreated: "desc" },
   });
   res.json({ data: entries });
 }

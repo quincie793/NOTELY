@@ -12,7 +12,8 @@ import EntryDetail from "./pages/EntryDetail";
 import Trash from "./pages/Trash";
 import Profile from "./pages/Profile";
 import Logout from "./pages/Logout";
-
+import Pinned from "./pages/Pinned";
+import Bookmarks  from "./pages/BookMarks";
 <Route path="/logout" element={<Logout />} />
 
 
@@ -34,7 +35,8 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/logout" element={<Logout />} />
-
+            <Route path="/bookmarks" element={<Bookmarks />} />
+            <Route path="/pinned" element={<Pinned />} />
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<Dashboard />} />

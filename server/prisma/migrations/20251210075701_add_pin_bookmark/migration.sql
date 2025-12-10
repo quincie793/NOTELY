@@ -1,0 +1,20 @@
+BEGIN TRY
+
+BEGIN TRAN;
+
+-- AlterTable
+ALTER TABLE [dbo].[Entry] ADD [bookmarked] BIT NOT NULL CONSTRAINT [Entry_bookmarked_df] DEFAULT 0,
+[pinned] BIT NOT NULL CONSTRAINT [Entry_pinned_df] DEFAULT 0;
+
+COMMIT TRAN;
+
+END TRY
+BEGIN CATCH
+
+IF @@TRANCOUNT > 0
+BEGIN
+    ROLLBACK TRAN;
+END;
+THROW
+
+END CATCH
