@@ -11,6 +11,10 @@ import EditEntry from "./pages/EditEntry";
 import EntryDetail from "./pages/EntryDetail";
 import Trash from "./pages/Trash";
 import Profile from "./pages/Profile";
+import Logout from "./pages/Logout";
+
+<Route path="/logout" element={<Logout />} />
+
 
 export default function App() {
   return (
@@ -29,6 +33,7 @@ export default function App() {
             <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/logout" element={<Logout />} />
 
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>

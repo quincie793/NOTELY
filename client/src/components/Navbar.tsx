@@ -1,15 +1,9 @@
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useAuth } from "../hooks/useAuth";
 import UserAvatar from "./UserAvatar";
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    logout();
-    navigate("/login");
-  };
+  const { user } = useAuth();
 
   return (
     <>
@@ -34,16 +28,16 @@ export default function Navbar() {
 
       <nav
         style={{
-          position: "fixed",       // ✅ fixed at top
-          top: 0,                  // ✅ anchor to top
+          position: "fixed",
+          top: 0,
           left: 0,
-          width: "100%",           // ✅ full width
-          zIndex: 1000,            // ✅ stays above other content
+          width: "100%",
+          zIndex: 1000,
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
           padding: "1rem 2rem",
-          background: "linear-gradient(to right, #1ba78dff, #8ea1f5ff)", // 🌈 your gradient untouched
+          background: "linear-gradient(to right, #1ba78dff, #8ea1f5ff)",
           color: "#fff",
           boxShadow: "0 2px 6px rgba(0,0,0,0.1)",
         }}
@@ -94,19 +88,16 @@ export default function Navbar() {
               >
                 Profile
               </NavLink>
-              <button
-                onClick={handleLogout}
-                className="nav-link"
-                style={{
-                  background: "none",
-                  border: "none",
-                  cursor: "pointer",
-                  color: "#ffdddd",
-                  fontWeight: "bold",
-                }}
+              {/* ✅ Updated: Logout now navigates to /logout page */}
+              <NavLink
+                to="/logout"
+                className={({ isActive }) =>
+                  isActive ? "nav-link active" : "nav-link"
+                }
+                style={{ color: "#ffdddd", fontWeight: "bold" }}
               >
                 Logout
-              </button>
+              </NavLink>
               <UserAvatar />
             </>
           ) : (
